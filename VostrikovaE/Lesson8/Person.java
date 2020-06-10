@@ -17,6 +17,20 @@ public class Person {
         this.age = age;
     }
 
+    @Override
+    public String toString() {
+        return "Person{" +'\n'+
+                " firstName=" + firstName +","+'\n'+
+                " secondName=" + secondName +"," +'\n'+
+                " age=" + age+"," +'\n'+
+                " password=" + password+"," +'\n'+
+                " weight=" + weight +'\n'+
+                '}';
+    }
+
+    public Person() {
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
