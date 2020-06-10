@@ -1,33 +1,30 @@
 package VostrikovaE.Lesson8;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.lang.reflect.InvocationTargetException;
 
 public class MainLesson8 {
 
-    public static void main(String[] args) {
-        Person[] persons = {new Person("Вася", "Пушкин", 15), new Person("Толя", "Колотушкин", 12)};
-        persons[0].setWeight(12.1);
-        persons[0].setPassword("12345678");
-        persons[1].setWeight(34.5);
-        persons[1].setPassword("qwerty");
-        String resultJson;
-        for (Person person : persons) {
-            try {
-                resultJson = ReflectionPerson.getJson(person);
-                System.out.println(resultJson);
-            } catch (IllegalAccessException ex) {
-                System.out.println(ex);
-            }
+    public static void main(String[] args) throws IllegalAccessException, JsonDesirializeException {
+        Object deserializePerson=null;
+
+        Person person=new Person("Коля","Пушкин",12);
+        person.setPassword("qwerty");
+        person.setWeight(12.3);
+
+        String personJson= ReflectionPerson.getJson(person);
+        System.out.println(personJson);
+        JsonDesirializer jsonDesirializer = JsonDesirializer.newInstance(Person.class);
+
+        try {
+           deserializePerson=jsonDesirializer.deserialize(personJson);
+            System.out.println(deserializePerson.toString());
+        } catch (IllegalAccessException|InstantiationException|InvocationTargetException e){
+            System.out.println("Проблема с reflection API "+ e);
+        } catch (JsonDesirializeException e){
+            System.out.println(e.getMessage());
         }
 
-
     }
-
-
-
 
 
 }
