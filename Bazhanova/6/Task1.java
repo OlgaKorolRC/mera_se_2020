@@ -3,7 +3,7 @@ import myarray.*;
 import java.util.Random;
 
 
-class Main {
+class Task1 {
     public static void main(String[] args) {
 
         Random rnd = new Random(System.currentTimeMillis());
@@ -33,7 +33,7 @@ class Main {
         MyArrayList < Bicycle > bicycles = new MyArrayList < > ();
 
 
-        Bicycle bicycle = new Bicycle();
+        Bicycle bicycle = new Bicycle("noname", 10);
 
         System.out.println("Велосипеды в  MyArrayList" + ":");
 
