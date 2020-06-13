@@ -8,10 +8,7 @@ public class Bicycle {
     private final int MAX_SPEED = 50;
     private final int MIN_SPEED = 5;
 
-    public Bicycle() {
-        modelName = "NoNamed";
-        maxSpeed = MIN_SPEED;
-    }
+    
     public Bicycle(String modelName, int maxSpeed) {
 
         this.modelName = modelName;
@@ -39,22 +36,27 @@ public class Bicycle {
     public String toString() {
         return (modelName + ", maxSpeed = " + maxSpeed);
     }
+    
+      @Override
+    public boolean equals(Object o) {
 
-
-    @Override
-    public boolean equals(Object obj) {
-
-        boolean res = false;
-        if (obj == this) {
-            res = true;
-
+        if (o == this) return true;
+        if (!(o instanceof Bicycle)) {
+            return false;
         }
-        return res;
+
+        Bicycle bicycle = (Bicycle) o;
+
+        return bicycle.modelName.equals(modelName) &&
+            bicycle.maxSpeed.equals(maxSpeed);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(modelName, maxSpeed);
+        int result = 17;
+        result = 31 * result + modelName.hashCode();
+        result = 31 * result + maxSpeed.hashCode();
+        return result;
     }
 }
