@@ -36,8 +36,10 @@ public class MyArrayList < T > {
     то внутренний массив уменьшается в два раза, чтобы экономить место.
     */
     public void remove(int index) {
-        for (int i = index; i < pointer; i++)
+        for (int i = index; i < pointer; i++) {
             array[i] = array[i + 1];
+        }
+        
         array[pointer] = null;
         pointer--;
         if (array.length > INIT_SIZE && pointer < array.length / CUT_RATE)
