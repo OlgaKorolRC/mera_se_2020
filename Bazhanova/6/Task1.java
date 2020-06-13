@@ -8,23 +8,23 @@ class Main {
 
         Random rnd = new Random(System.currentTimeMillis());
         String[] models = new String[] {
-            "Merida",
+            "MERIDA",
             "GT",
-            "Trek",
-            "Stels",
-            "Forward",
-            "Mongoose",
-            "Stern",
-            "Cube",
-            "Norco",
-            "Giant",
-            "Author",
-            "Jamis",
-            "Stark"
+            "TREK",
+            "STELS",
+            "FORWARD",
+            "MONGOOSE",
+            "STERN",
+            "CUBE",
+            "NORCO",
+            "GIANT",
+            "AUTHOR",
+            "JAMIS",
+            "STARK"
         };
 
 
-        int n, k;
+
         int min = 5, max = 50;
 
         int num = 11;
@@ -39,8 +39,8 @@ class Main {
 
         for (int i = 0; i < num; i++) {
             try {
-                n = rnd.nextInt(models.length);
-                k = min + rnd.nextInt(max - min + 1);
+                int n = rnd.nextInt(models.length);
+                int k = min + rnd.nextInt(max - min + 1);
                 bicycle = new Bicycle(models[n], k);
                 bicycles.add(bicycle);
                 System.out.println(bicycles.get(i).toString());
@@ -58,8 +58,6 @@ class Main {
 
         int i = 0;
 
-
-        bicycles.get(i).getSpeed();
 
         while (i < bicycles.size()) {
             if (bicycles.get(i).getSpeed() >= minSpeed) {
