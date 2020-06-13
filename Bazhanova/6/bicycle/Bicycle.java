@@ -14,9 +14,9 @@ public class Bicycle {
         this.modelName = modelName;
 
         if (maxSpeed > MAX_SPEED)
-            this.maxSpeed = MAX_SPEED;
+            throw new IllegalArgumentException("максимальная скорость не может быть больше "+ MAX_SPEED);
         else if (maxSpeed < MIN_SPEED)
-            this.maxSpeed = MIN_SPEED;
+            throw new IllegalArgumentException("максимальная скорость не может быть меньше "+ MIN_SPEED);
         else
             this.maxSpeed = maxSpeed;
 
@@ -48,15 +48,12 @@ public class Bicycle {
         Bicycle bicycle = (Bicycle) o;
 
         return bicycle.modelName.equals(modelName) &&
-            bicycle.maxSpeed.equals(maxSpeed);
+            bicycle.maxSpeed == maxSpeed;
     }
 
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + modelName.hashCode();
-        result = 31 * result + maxSpeed.hashCode();
-        return result;
+        return Objects.hash(modelName, maxSpeed);
     }
 }
