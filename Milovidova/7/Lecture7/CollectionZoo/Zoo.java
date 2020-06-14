@@ -60,12 +60,11 @@ public class Zoo <T>{
                 '}';
     }
 
-    private void  printAnimalsFromCollection (Collection<T> myCollection) {
+    private void  printAnimalsFromCollection (Collection<? extends Animal > myCollection) {
 
-        for (
-                Iterator<T> iterator = myCollection.iterator(); iterator.hasNext(); ) {
+        for (Iterator <? extends Animal> iterator = myCollection.iterator(); iterator.hasNext(); ) {
 
-            T animal = iterator.next();
+            Object animal = iterator.next();
             System.out.println(animal);
 
         }
