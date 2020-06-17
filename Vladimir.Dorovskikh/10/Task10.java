@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -28,54 +27,74 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * - Для получения содержимого используйте new URL().openStream() (не забывайте закрывать поток)
  *
  */
-public class Task10 {
-    public static void main(String[] args) throws IOException, InterruptedException {
-        ArrayList<String> links = new ArrayList<>();
-        links.add("https://habr.com/ru/post/213319/");
-        links.add("https://habr.com/ru/company/luxoft/blog/157273/");
-        links.add("https://docs.oracle.com/javase/8/docs/api/java/util/Scanner.html");
+class Read
+{
+    public static long size;
+    public static long duration;
+}
 
-        long sizeAll = 0;
-        long durationSequential = 0;
-        CopyOnWriteArrayList<Integer> sizeArrayList = new CopyOnWriteArrayList<>();
-        for (int i = 0; i < links.size(); ++i) {
-            sizeArrayList.add(0);
-        }
+public class Task10 {
+    static ArrayList<String> links;
+    static CopyOnWriteArrayList<Integer> sizeArrayList;
+
+
+    private static void readSequential()
+    {
         long startAll = System.currentTimeMillis();
         for (int i = 0; i < links.size(); ++i) {
             readURL(links.get(i), sizeArrayList, i);
         }
-        long duration = System.currentTimeMillis() - startAll;
-        for (int i = 0; i < links.size(); ++i) {
-            sizeAll += sizeArrayList.get(i);
-        }
-        durationSequential += duration;
-        System.out.println(links.size() + " links size: " + sizeAll + " read time " + durationSequential + "ms.");
+        Read.duration = System.currentTimeMillis() - startAll;
 
-        sizeArrayList.set(0,0);
-        sizeArrayList.set(1,0);
-        sizeArrayList.set(2,0);
-        Thread t0 = new Thread(() -> {
-            try {
-                readURL(links.get(0), sizeArrayList, 0);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        Thread t1 = new Thread(() -> {
-            try {
-                readURL(links.get(1), sizeArrayList, 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        Thread t2 = new Thread(() -> {
-            try {
-                readURL(links.get(2), sizeArrayList, 2);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        Read.size = 0;
+        for (int i = 0; i < links.size(); ++i) {
+            Read.size += sizeArrayList.get(i);
+        }
+        System.out.println(links.size() + " links size: " + Read.size + " read time " + Read.duration + "ms.");
+        System.out.println();
+    }
+
+    private static void init() {
+        links = new ArrayList<>();
+        links.add("https://habr.com/ru/post/213319/");
+        links.add("https://habr.com/ru/company/luxoft/blog/157273/");
+        links.add("https://docs.oracle.com/javase/8/docs/api/java/util/Scanner.html");
+
+        sizeArrayList = new CopyOnWriteArrayList<>();
+        for (int i = 0; i < links.size(); ++i) {
+            sizeArrayList.add(0);
+        }
+    }
+
+    private static void reInit() {
+        for (int i = 0; i < sizeArrayList.size(); ++i) {
+            sizeArrayList.set(i,0);
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+
+        init();
+
+        readSequential();
+        long durationSequential = Read.duration;
+
+        reInit();
+        final long durationParallel = getDurationParallel();
+        System.out.printf("sequential reading took %.2f times of parallel.\n", ((double) durationSequential/durationParallel));
+        System.out.println();
+
+        reInit();
+        readSequential();
+        durationSequential = Read.duration;
+
+        System.out.printf("sequential reading took %.2f times of parallel.\n", ((double) durationSequential/durationParallel));
+    }
+
+    private static long getDurationParallel() throws InterruptedException {
+        Thread t0 = new Thread(() -> readURL(links.get(0), sizeArrayList, 0));
+        Thread t1 = new Thread(() -> readURL(links.get(1), sizeArrayList, 1));
+        Thread t2 = new Thread(() -> readURL(links.get(2), sizeArrayList, 2));
 
         final long start = System.currentTimeMillis();
 
@@ -88,23 +107,24 @@ public class Task10 {
         t2.join();
 
         final long durationParallel = System.currentTimeMillis() - start;
-        sizeAll = 0;
+        long sizeAll = 0;
         for (Integer integer : sizeArrayList) {
             sizeAll += integer;
         }
         System.out.println(links.size() + " links size: " + sizeAll + " read time " + durationParallel + "ms.");
-        System.out.printf("sequential reading took %.2f times of parallel.\n", ((double) durationSequential/durationParallel));
+        return durationParallel;
     }
 
-    private static void readURL(String link, CopyOnWriteArrayList<Integer> sizeArrayList, int index) throws IOException {
-        InputStream input = new URL(link).openStream();
-        final long start = System.currentTimeMillis();
-        while(input.read() != -1)
-        {
-            sizeArrayList.set(index, sizeArrayList.get(index)+1);
+
+    private static void readURL(String link, CopyOnWriteArrayList<Integer> sizeArrayList, int index)  {
+        int size = 0;
+        try (InputStream input = new URL(link).openStream()) {
+            while (input.read() != -1) {
+                ++size;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        final long duration = System.currentTimeMillis() - start;
-        System.out.println(link + " size: " + sizeArrayList.get(index) + " read time " + duration + " ms.");
-        input.close();
+        sizeArrayList.set(index, size);
     }
 }
