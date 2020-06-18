@@ -8,18 +8,15 @@ public class Bicycle {
     private final int MAX_SPEED = 50;
     private final int MIN_SPEED = 5;
 
-    public Bicycle() {
-        modelName = "NoNamed";
-        maxSpeed = MIN_SPEED;
-    }
+    
     public Bicycle(String modelName, int maxSpeed) {
 
         this.modelName = modelName;
 
         if (maxSpeed > MAX_SPEED)
-            this.maxSpeed = MAX_SPEED;
+            throw new IllegalArgumentException("максимальная скорость не может быть больше "+ MAX_SPEED);
         else if (maxSpeed < MIN_SPEED)
-            this.maxSpeed = MIN_SPEED;
+            throw new IllegalArgumentException("максимальная скорость не может быть меньше "+ MIN_SPEED);
         else
             this.maxSpeed = maxSpeed;
 
@@ -39,17 +36,19 @@ public class Bicycle {
     public String toString() {
         return (modelName + ", maxSpeed = " + maxSpeed);
     }
+    
+      @Override
+    public boolean equals(Object o) {
 
-
-    @Override
-    public boolean equals(Object obj) {
-
-        boolean res = false;
-        if (obj == this) {
-            res = true;
-
+        if (o == this) return true;
+        if (!(o instanceof Bicycle)) {
+            return false;
         }
-        return res;
+
+        Bicycle bicycle = (Bicycle) o;
+
+        return bicycle.modelName.equals(modelName) &&
+            bicycle.maxSpeed == maxSpeed;
     }
 
 
